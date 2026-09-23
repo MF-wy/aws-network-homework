@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AWS作業 - 網路基礎介紹</title>
+
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            line-height: 1.8;
+            color: #333333;
+        }
+
+        header {
+            background-color: #232f3e;
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+        }
+
+        header h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+
+        header p {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        section {
+            background-color: white;
+            margin-bottom: 25px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #ff9900;
+            border-bottom: 2px solid #ff9900;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #232f3e;
+        }
+
+        p {
+            font-size: 16px;
+        }
+
+        .example {
+            background-color: #f5f5f5;
+            border-left: 5px solid #ff9900;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .url {
+            background-color: #eeeeee;
+            padding: 15px;
+            border-radius: 5px;
+            word-break: break-all;
+            font-family: Consolas, monospace;
+        }
+
+        .answer {
+            background-color: #fafafa;
+            padding: 15px 20px;
+            border-radius: 5px;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #232f3e;
+            color: white;
+            padding: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>AWS網路基礎作業</h1>
+        <p>資管三　113213018　余采霏</p>
+    </header>
+
+    <div class="container">
+
+        <!-- 第一題 -->
+        <section>
+            <h2>1. 何謂憑證、HTTPS、HTTP、Port</h2>
+
+            <h3>HTTP</h3>
+            <p>
+                HTTP（HyperText Transfer Protocol，超文字傳輸協定）是瀏覽器與網站伺服器之間傳送資料所使用的通訊協定，預設使用Port 80。
+            </p>
+
+            <h3>HTTPS</h3>
+            <p>
+                HTTPS（HyperText Transfer Protocol Secure）是在HTTP的基礎上加入TLS加密，可以保護瀏覽器與網站伺服器之間傳輸的資料，預設使用Port 443。
+            </p>
+
+            <h3>Port</h3>
+            <p>
+                Port（通訊埠）是用來區分同一台電腦上不同網路服務的號碼。
+            </p>
+
+            <div class="example">
+                Port 80：HTTP<br>
+                Port 443：HTTPS<br>
+                Port 22：SSH
+            </div>
+
+            <h3>憑證</h3>
+            <p>
+                憑證是HTTPS安全連線的一部分，可以用來確認網站的身分，並協助建立加密的網路連線。
+            </p>
+        </section>
+
+
+        <!-- 第二題 -->
+        <section>
+            <h2>2. Inbound、Outbound防火牆是什麼，怎麼設定</h2>
+
+            <h3>Inbound</h3>
+            <p>
+                Inbound是進入伺服器的網路流量，例如使用者從自己的電腦透過Internet連線到AWS EC2伺服器，就是Inbound。
+            </p>
+
+            <h3>Outbound</h3>
+            <p>
+                Outbound是從伺服器離開的網路流量，例如AWS EC2從Internet下載資料，就是Outbound。
+            </p>
+
+            <h3>AWS Security Group</h3>
+            <p>
+                在AWS中可以使用Security Group（安全群組）控制進出EC2的網路流量。
+                設定網站時，可以允許HTTP使用TCP Port 80進入伺服器，也可以允許HTTPS使用TCP Port 443進入伺服器。
+                若需要使用SSH遠端登入EC2，則可以使用Port 22，並將來源限制為自己的IP位址。
+            </p>
+
+            <div class="example">
+                HTTP：TCP Port 80<br>
+                HTTPS：TCP Port 443<br>
+                SSH：TCP Port 22
+            </div>
+
+            <p>
+                例如網站的Inbound設定可以為HTTP、TCP、Port 80、Source為0.0.0.0/0，
+                代表允許所有IPv4位址透過HTTP連線到網站。
+            </p>
+        </section>
+
+
+        <!-- 第三題 -->
+        <section>
+            <h2>3. 什麼是CIDR</h2>
+
+            <p>
+                CIDR（Classless Inter-Domain Routing）是一種表示IP位址範圍的方法，
+                通常以「IP位址/數字」表示，例如192.168.1.0/24。
+            </p>
+
+            <div class="example">
+                192.168.1.0/24
+            </div>
+
+            <p>
+                0.0.0.0/0代表所有IPv4位址，因此如果AWS Security Group的HTTP Port 80來源設定為0.0.0.0/0，
+                就代表所有IPv4位址都可以嘗試透過HTTP連線。
+            </p>
+
+            <p>
+                /32可以表示單一IPv4位址，例如192.168.1.100/32代表只有192.168.1.100這個IP位址。
+            </p>
+
+            <div class="example">
+                0.0.0.0/0 → 所有IPv4位址<br>
+                192.168.1.100/32 → 單一IPv4位址
+            </div>
+        </section>
+
+
+        <!-- 第四題 -->
+        <section>
+            <h2>4. 什麼是DNS？什麼是IP？什麼是網域名稱？什麼是URL？</h2>
+
+            <h3>IP</h3>
+            <p>
+                IP是網路設備在網路上的位址，用來讓資料知道要傳送到哪一台設備。
+            </p>
+
+            <h3>網域名稱</h3>
+            <p>
+                網域名稱（Domain Name）是方便使用者記憶的網站名稱，例如www.ncnu.edu.tw。
+            </p>
+
+            <h3>DNS</h3>
+            <p>
+                DNS（Domain Name System，網域名稱系統）主要負責將網域名稱解析成對應的IP位址。
+                例如使用者輸入www.ncnu.edu.tw後，DNS可以找到這個網域名稱所對應的IP位址。
+            </p>
+
+            <div class="example">
+                網域名稱 → DNS → IP位址
+            </div>
+
+            <h3>URL</h3>
+            <p>
+                URL（Uniform Resource Locator）是用來表示網路資源位置的完整網址。
+            </p>
+
+            <div class="url">
+                https://www.ncnu.edu.tw/1234/class/upload.php?file=abc
+            </div>
+        </section>
+
+
+        <!-- 第五題 -->
+        <section>
+            <h2>5. URL範例分析</h2>
+
+            <p>以下為URL範例：</p>
+
+            <div class="url">
+                https://www.ncnu.edu.tw/1234/class/upload.php?file=abc
+            </div>
+
+            <div class="answer">
+
+                <p>
+                    <strong>https://</strong> 代表使用HTTPS協定。
+                </p>
+
+                <p>
+                    <strong>www.ncnu.edu.tw</strong> 是網站的網域名稱或主機名稱。
+                </p>
+
+                <p>
+                    <strong>/1234/class/upload.php</strong> 是網站中的路徑，用來指定要存取的資源。
+                </p>
+
+                <p>
+                    <strong>?file=abc</strong> 是查詢參數，其中file是參數名稱，abc是參數值。
+                </p>
+
+                <p>
+                    如果沒有另外指定Port，HTTPS預設使用Port 443。
+                </p>
+
+                <p>
+                    因此這個URL代表使用HTTPS連線到www.ncnu.edu.tw，
+                    存取/1234/class/upload.php這個路徑，
+                    並傳送file=abc這個參數給伺服器。
+                </p>
+
+            </div>
+        </section>
+
+
+        <!-- 第六題 -->
+        <section>
+            <h2>6. 網頁製作</h2>
+
+            <p>
+                本次作業使用HTML製作網頁，內容介紹HTTP、HTTPS、Port、
+                Inbound、Outbound、CIDR、DNS、IP、網域名稱以及URL等網路基礎概念。
+            </p>
+
+            <p>
+                本網頁檔案名稱為index.html，完成後可以放置於AWS EC2的Web Server中，
+                再透過瀏覽器輸入EC2的Public IPv4 Address觀看網頁。
+            </p>
+
+            <div class="example">
+                使用者電腦<br>
+                ↓<br>
+                Internet<br>
+                ↓<br>
+                AWS EC2<br>
+                ↓<br>
+                Security Group<br>
+                ↓<br>
+                Port 80<br>
+                ↓<br>
+                Web Server<br>
+                ↓<br>
+                index.html
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <footer>
+        資管三　113213018　余采霏
+    </footer>
+
+</body>
+
+</html>
